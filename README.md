@@ -2,7 +2,7 @@
 
 Guia para realizar transacciones complejas con Miniscript en linea de comandos con Bitcoin Core vs 30.0.
 
-DISCLAIMER: Esta guia ha sido realizada con fines educativos. Siempre pruebe los comandos en redes de prueba y asegurese que va a poder desbloquear los BTC. Use bajo su propia responsabilidad.
+DISCLAIMER: Esta guia ha sido realizada con fines educativos. Siempre pruebe los comandos en redes de prueba y asegurese que va a poder desbloquear los BTC.
 
 ## Requisitos
 
