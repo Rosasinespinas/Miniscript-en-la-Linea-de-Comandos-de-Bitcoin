@@ -18,9 +18,9 @@ https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line/blob
 
 [1. Multifirma](/1.Multifirma.md)
 
-### Parte 2. Miniscripts
+### Parte 2. Miniscript
 
-[2.Miniscripts](/2.Miniscript.md)
+[2.Miniscript](/2.Miniscript.md)
 
 ### Parte 3. Ejemplos en bash script
 
