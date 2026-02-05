@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#Ejemplo uso descriptors en taproot con un key path Alice y dos scripts path
+#------------------------------
+echo "Ejemplo uso descriptors en taproot con un key path Alice y dos scripts path"
+#------------------------------
 #Alice puede gastar siempre, Bob, Carla y Diego tienen una firma dos de 3, Diego puede gastar despues de 10 bloques
 #Por sencillez estoy reusando direcciones, nunca hacer esto en la red principal
 #------------------------------
@@ -8,11 +10,18 @@
 #------------------------------
 bitcoin-cli stop
 rm -rf ~/.bitcoin/regtest
+sleep 3
+
 bitcoind -daemon
 
 sleep 3
 
-#Creo los wallets
+bitcoin-cli getblockchaininfo |jq -r '.chain, .blocks'
+
+sleep 3
+#------------------------------
+echo "Parte 1: Creo los wallets"
+#------------------------------
 bitcoin-cli createwallet "Alice"
 bitcoin-cli createwallet "Bob"
 bitcoin-cli createwallet "Carla"
@@ -49,7 +58,7 @@ bitcoin-cli -named createwallet wallet_name="tr" disable_private_keys=true blank
 bitcoin-cli -rpcwallet="tr" importdescriptors "[{\"desc\": \"$descsum\",\"timestamp\": \"now\",\"active\": false,\"watching-only\": true,\"internal\": false}]" #,\"range\": [0,999]}]" # , {\"desc\": \"$intdescsum\",\"timestamp\": \"now\",\"active\": true,\"watching-only\": true,\"internal\": true,\"range\": [0,999]}]"
 
 #------------------------------
-#Parte 2. Generar Bitcoin en regtest
+echo "Parte 2. Generar Bitcoin en regtest"
 #------------------------------
 
 bitcoin-cli generatetoaddress 101 $dirdesc
@@ -57,7 +66,7 @@ echo "Nuestra cartera tiene ahora un saldo de: $(bitcoin-cli -rpcwallet=tr getba
 identtx=$(bitcoin-cli -rpcwallet="tr" listunspent | jq -r '.[0] | .txid')
 
 #------------------------------
-#Parte 3: Alice va a gastar de Wallet tr y enviar 49.998BTC a su propia cartera
+echo "Parte 3: Alice va a gastar de Wallet tr y enviar 49.998BTC a su propia cartera"
 #------------------------------
 
 direccionAlice=$(bitcoin-cli -rpcwallet="Alice" getnewaddress)
@@ -78,7 +87,7 @@ bitcoin-cli generatetoaddress 1 $dirdesc
 echo "Balance de wallet taproot: $(bitcoin-cli -rpcwallet="tr" getbalance)BTC"
 echo "Balance de wallet Alice: $(bitcoin-cli -rpcwallet="Alice" getbalance)BTC"
 #------------------------------
-#Parte 4: Bob y Carla van a enviar a Alice 49.998 con su firma 2 de 3
+echo "Parte 4: Bob y Carla van a enviar a Alice 49.998 con su firma 2 de 3"
 #------------------------------
 #Obtenemos el UTXO
 identtx=$(bitcoin-cli -rpcwallet=tr listunspent | jq -r '.[0] | .txid')
@@ -103,7 +112,7 @@ echo "Balance de wallet taproot: $(bitcoin-cli -rpcwallet="tr" getbalance)BTC"
 echo "Balance de wallet Alice: $(bitcoin-cli -rpcwallet="Alice" getbalance)BTC"
 
 #------------------------------
-#Parte 5: Diego gasta pero tiene que dejar pasar 10 bloques, va a enviar 9.998BTC a su propia dirección
+echo "Parte 5: Diego gasta pero tiene que dejar pasar 10 bloques, va a enviar 9.998BTC a su propia dirección"
 #------------------------------
 
 #Necesito una transaccion que no tenga mas de 10 bloques de minada, voy a enviar a la direccion 10 BTC de Alice
@@ -124,11 +133,17 @@ psbtupdate=$(bitcoin-cli utxoupdatepsbt $psbt "[{\"desc\": \"$descsum\"}]")
 psbtD=$(bitcoin-cli -rpcwallet="Diego" walletprocesspsbt $psbtupdate | jq -r '.psbt')
 #Finaliza
 finalizedpsbt3=$(bitcoin-cli finalizepsbt $psbtD | jq -r '.hex')
-#Envia
+#------------------------------
+echo "Envia"
+#------------------------------
 bitcoin-cli sendrawtransaction $finalizedpsbt3
-#No puedo enviar, genero 11 bloques
+#------------------------------
+echo "No puedo enviar, genero 11 bloques"
+#------------------------------
 bitcoin-cli generatetoaddress 11 $dirdesc
-#Envio de nuevo
+#------------------------------
+echo "Envio de nuevo"
+#------------------------------
 bitcoin-cli sendrawtransaction $finalizedpsbt3
 
 bitcoin-cli generatetoaddress 1 $dirdesc
@@ -142,3 +157,9 @@ bitcoin-cli decoderawtransaction $finalizedpsbt1
 bitcoin-cli decoderawtransaction $finalizedpsbt2
 bitcoin-cli decoderawtransaction $finalizedpsbt3
 
+sleep 3
+
+bitcoin-cli getblockchaininfo |jq -r '.chain, .blocks'
+bitcoin-cli stop
+
+echo "Fin del Ejercicio"
