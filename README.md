@@ -28,7 +28,7 @@ https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line/blob
 
 [Multifirma metodo 2](/ejemplos/multifirma_met2.sh)
 
-[Bloqueo simple de tiempo](/ejemplos/simplebloquetiempo.sh)
+[Bloqueo simple de tiempo](/ejemplos/simplebloqueotiempo.sh)
 
 [Miniscript or](/ejemplos/miniscript_or.sh)
 
